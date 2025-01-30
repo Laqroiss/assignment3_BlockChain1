@@ -1,0 +1,33 @@
+# Node.js
+/node_modules/
+/dist/
+/build/
+/*.log
+
+# Vite
+.vite/
+
+# React
+/.env
+/.env.local
+/.env.*.local
+/public/asset-manifest.json
+/public/index.html
+
+# Hardhat
+/artifacts/
+/cache/
+/typechain/
+
+# IDEs
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
