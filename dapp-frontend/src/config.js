@@ -1,5 +1,14 @@
-export const CONTRACT_ADDRESS = "0xYourSmartContractAddress"; // Replace with your deployed contract address
-
+export const CONTRACT_ADDRESS = "0xYourDeployedContractAddress"; // Update this
 export const CONTRACT_ABI = [
-  // Paste your contract ABI here (found in artifacts/Crowdfunding.json)
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_title", "type": "string" },
+      { "internalType": "string", "name": "_description", "type": "string" },
+      { "internalType": "uint256", "name": "_goal", "type": "uint256" }
+    ],
+    "name": "createCampaign",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
 ];

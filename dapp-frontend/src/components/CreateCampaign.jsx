@@ -1,61 +1,75 @@
 import { useState } from "react";
+import { ethers } from "ethers";
 
-const CreateCampaign = ({ contract }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [goal, setGoal] = useState("");
+const CreateCampaign = ({ signer, contract }) => {
+  const [campaignName, setCampaignName] = useState("");
+  const [campaignAmount, setCampaignAmount] = useState("");
+  const [campaignDuration, setCampaignDuration] = useState("");
 
   const createCampaign = async () => {
-    if (!contract) return;
-  
     try {
-      // Check parameters before sending to contract
-      console.log("Creating campaign with:", title, description, goal);
-  
-      // Ensure the goal is parsed correctly to Wei
-      const parsedGoal = ethers.utils.parseEther(goal);
-      console.log("Parsed goal:", parsedGoal);
-  
-      // Calling the contract
-      const tx = await contract.createCampaign(title, description, parsedGoal);
-      await tx.wait();
+      console.log(`Creating campaign with: ${campaignName} ${campaignAmount} ${campaignDuration}`);
+
+      if (!campaignName || !campaignAmount || !campaignDuration) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const amount = parseFloat(campaignAmount);
+      if (isNaN(amount) || amount <= 0) {
+        alert("Invalid campaign amount. Please enter a valid number.");
+        return;
+      }
+     
+
+      const amountInEther = ethers.parseEther(amount.toString());
+
+      console.log("Amount in Ether:", amountInEther);
+
+      if (!contract || !signer) {
+        console.error("Contract or signer is not initialized");
+        return;
+      }
+
+      const tx = await contract.createCampaign(campaignName, amountInEther, campaignDuration, {
+        gasLimit: 500000,
+        from: await signer.getAddress(),
+      });
+
+      console.log("Transaction sent:", tx);
+
+      const receipt = await tx.wait();
+      console.log("Transaction mined:", receipt);
+
       alert("Campaign created successfully!");
     } catch (error) {
       console.error("Error creating campaign:", error);
-      alert("Failed to create campaign.");
+      alert("Error creating campaign. Please try again.");
     }
   };
-  
 
   return (
     <div>
-      <h2>Create New Campaign</h2>
+      <h1>Create Campaign</h1>
       <input
         type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="mt-2 p-2 border border-gray-400 rounded"
-      />
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        className="mt-2 p-2 border border-gray-400 rounded"
+        placeholder="Campaign Name"
+        value={campaignName}
+        onChange={(e) => setCampaignName(e.target.value)}
       />
       <input
-        type="number"
-        placeholder="Goal (ETH)"
-        value={goal}
-        onChange={(e) => setGoal(e.target.value)}
-        className="mt-2 p-2 border border-gray-400 rounded"
+        type="text"
+        placeholder="Amount (ETH)"
+        value={campaignAmount}
+        onChange={(e) => setCampaignAmount(e.target.value)}
       />
-      <button
-        onClick={createCampaign}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-      >
-        Create Campaign
-      </button>
+      <input
+        type="text"
+        placeholder="Duration (Days)"
+        value={campaignDuration}
+        onChange={(e) => setCampaignDuration(e.target.value)}
+      />
+      <button onClick={createCampaign}>Create Campaign</button>
     </div>
   );
 };

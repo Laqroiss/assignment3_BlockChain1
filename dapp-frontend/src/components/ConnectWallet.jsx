@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ethers } from "ethers";
 
 const ConnectWallet = ({ setSigner }) => {
@@ -8,9 +8,28 @@ const ConnectWallet = ({ setSigner }) => {
     if (window.ethereum) {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
+
+        // const network = await provider.getNetwork();
+        // console.log("Connected to network:", network);
+
+        // if (network.chainId === 31337) {
+        //   console.log("ENS resolution skipped on local network (chainId: 1337).");
+        // } else {
+        //   try {
+        //     const ensAddress = await provider.resolveName("example.eth");
+        //     console.log("Resolved ENS address:", ensAddress);
+        //   } catch (ensError) {
+        //     console.log("ENS resolution failed:", ensError);
+        //   }
+        // }
+
         const signer = await provider.getSigner();
+        console.log(signer);
         setSigner(signer);
-        setWalletAddress(await signer.getAddress());
+        const address = await signer.getAddress();
+        setWalletAddress(address);
+
+        console.log("Wallet connected:", address);
       } catch (error) {
         console.error("Wallet connection failed:", error);
       }
