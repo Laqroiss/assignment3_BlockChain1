@@ -3,14 +3,14 @@ import { ethers } from "ethers";
 
 const CreateCampaign = ({ signer, contract }) => {
   const [campaignName, setCampaignName] = useState("");
-  const [campaignAmount, setCampaignAmount] = useState("");
-  const [campaignDuration, setCampaignDuration] = useState("");
+  const [campaignDescription, setCampaignDescription] = useState(""); 
+  const [campaignAmount, setCampaignAmount] = useState(""); 
 
   const createCampaign = async () => {
     try {
-      console.log(`Creating campaign with: ${campaignName} ${campaignAmount} ${campaignDuration}`);
+      console.log(`Creating campaign with: ${campaignName} ${campaignDescription} ${campaignAmount}`);
 
-      if (!campaignName || !campaignAmount || !campaignDuration) {
+      if (!campaignName || !campaignDescription || !campaignAmount) {
         alert("Please fill all fields.");
         return;
       }
@@ -20,10 +20,8 @@ const CreateCampaign = ({ signer, contract }) => {
         alert("Invalid campaign amount. Please enter a valid number.");
         return;
       }
-     
 
       const amountInEther = ethers.parseEther(amount.toString());
-
       console.log("Amount in Ether:", amountInEther);
 
       if (!contract || !signer) {
@@ -31,10 +29,15 @@ const CreateCampaign = ({ signer, contract }) => {
         return;
       }
 
-      const tx = await contract.createCampaign(campaignName, amountInEther, campaignDuration, {
-        gasLimit: 500000,
-        from: await signer.getAddress(),
-      });
+      const tx = await contract.createCampaign(
+        campaignName,
+        campaignDescription,
+        amountInEther,
+        {
+          gasLimit: 500000,
+        }
+      );
+      
 
       console.log("Transaction sent:", tx);
 
@@ -59,15 +62,15 @@ const CreateCampaign = ({ signer, contract }) => {
       />
       <input
         type="text"
-        placeholder="Amount (ETH)"
-        value={campaignAmount}
-        onChange={(e) => setCampaignAmount(e.target.value)}
+        placeholder="Campaign Description"
+        value={campaignDescription}
+        onChange={(e) => setCampaignDescription(e.target.value)}
       />
       <input
         type="text"
-        placeholder="Duration (Days)"
-        value={campaignDuration}
-        onChange={(e) => setCampaignDuration(e.target.value)}
+        placeholder="Goal Amount (ETH)"
+        value={campaignAmount}
+        onChange={(e) => setCampaignAmount(e.target.value)}
       />
       <button onClick={createCampaign}>Create Campaign</button>
     </div>

@@ -14,7 +14,8 @@ function App() {
       
       {contract && (
         <>
-          <CreateCampaign contract={contract} />
+          <CreateCampaign contract={contract} signer={signer} />
+
           <DonateToCampaign contract={contract} />
         </>
       )}
